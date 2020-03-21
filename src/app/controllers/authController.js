@@ -31,13 +31,18 @@ router.post('/login', async (req, res) => {
     const { cpf, email, password } = req.body;
 
     // Verificar se existe o usuário
-    const user = await User.findOne({ $and: [{ email }, { cpf }] })
-      .select('+password');
-    if (!user) {
+    const check = await User.findOne({ $and: [{ email }, { cpf }] });
+    if (!check) {
       const register = await User.create(req.body);
       register.password = undefined;
       return res.send({ register, token: generateToken({ id: register.id }), message: 'Registrado com sucesso' });
     }
+
+    const user = await User.findOne({ $or: [{ email }, { cpf }] })
+      .select('+password');
+
+    if (!user)
+      return res.status(401).send({ error: 'Usuario invalido' });
 
     // Compara senha para efetuar o login
     if (!await bcrypt.compare(password, user.password)) {
