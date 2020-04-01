@@ -1,11 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
-const authMiddleware = require('../middlewares/authMiddleware.js');
-const levelMiddleware = require('../middlewares/levelMiddleware.js');
+const path = require('path');
+const srcPath = path.resolve() + '/src';
 
-const Denuncia = require('../models/denunciasModel.js');
-const User = require('../models/userModel.js');
+const authMiddleware = require(`${srcPath}/app/middlewares/authMiddleware.js`);
+const levelMiddleware = require(`${srcPath}/app/middlewares/levelMiddleware.js`);
+
+const Denuncia = require(`${srcPath}/app/models/denunciasModel.js`);
+const User = require(`${srcPath}/app/models/userModel.js`);
 
 router.use(authMiddleware);
 

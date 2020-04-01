@@ -41,7 +41,8 @@ router.post('/login', async (req, res) => {
     }
 
     const user = await User.findOne({ $or: [{ email }, { cpf }] })
-      .select('+password');
+      .select('+password')
+      .populate('questAcquired');
 
     if (!user)
       return res.status(401).send({ error: 'Usuario invalido' });

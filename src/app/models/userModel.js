@@ -85,9 +85,31 @@ const userSchema = new mongoose.Schema({
       type: Number,
       default: 0,
     }
+  }],
+
+  questAcquired: [{
+    _id: false,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Quest',
+    required: true,
+  }],
+
+  questsCompleted: [{
+    _id: false,
+    title: {
+      type: String,
+      require: true,
+    },
+
+    description: {
+      type: String,
+      require: true,
+    },
+
+    picture: {
+      type: Buffer,
+    }
   }]
-
-
 });
 
 // ========================= Encryptação de Senha =================== //
