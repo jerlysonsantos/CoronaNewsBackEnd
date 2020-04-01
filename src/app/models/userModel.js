@@ -42,25 +42,25 @@ const userSchema = new mongoose.Schema({
 
   name: {
     type: String,
-    require: true,
+    require: [true, 'Um Nome é necessário'],
   },
 
   email: {
     type: String,
     unique: true,
-    require: true,
+    require: [true, 'Um Email é necessário'],
     lowercase: true,
   },
 
   cpf: {
     type: String,
     unique: true,
-    require: true,
+    require: [true, 'Um CPF é necessário'],
   },
 
   password: {
     type: String,
-    required: true,
+    required: [true, 'Uma Senha é necessária'],
     select: false,
   },
 

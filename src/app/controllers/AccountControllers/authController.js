@@ -12,9 +12,11 @@ const path = require('path');
 const crypto = require('crypto');
 const passport = require('passport');
 
-const User = require('../models/userModel.js');
-const { secret } = require('../../config/secretToken.json');
-const mailer = require('../../module/mailer.js');
+const srcPath = path.resolve() + '/src';
+
+const User = require(`${srcPath}/app/models/userModel.js`);
+const { secret } = require(`${srcPath}/config/secretToken.json`);
+const mailer = require(`${srcPath}/module/mailer.js`);
 
 // =========================Gera Um token de Autenticação==================== //
 function generateToken(params = {}) {
@@ -45,9 +47,9 @@ router.post('/login', async (req, res) => {
       return res.status(401).send({ error: 'Usuario invalido' });
 
     // Compara senha para efetuar o login
-    if (!await bcrypt.compare(password, user.password)) {
+    if (!await bcrypt.compare(password, user.password))
       return res.status(401).send({ error: 'Senha invalida' });
-    }
+
 
     // Retorna as informações do usuario logado mais o token de sessão
     user.password = undefined;

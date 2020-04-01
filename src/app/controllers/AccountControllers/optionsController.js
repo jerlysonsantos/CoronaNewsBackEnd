@@ -2,11 +2,13 @@ const express = require('express');
 const multiparty = require('multiparty');
 
 const router = express.Router();
+const path = require('path');
+const srcPath = path.resolve() + '/src';
 
 
-const User = require('../models/userModel.js');
-const compress = require('../middlewares/compressMiddleware.js');
-const authMiddleware = require('../middlewares/authMiddleware.js');
+const User = require(`${srcPath}/app/models/userModel.js`);
+const compress = require(`${srcPath}/app/middlewares/compressMiddleware.js`);
+const authMiddleware = require(`${srcPath}/app/middlewares/authMiddleware.js`);
 
 router.use(authMiddleware);
 // ====================== Avatar Upload ======================= //
@@ -40,24 +42,22 @@ router.post('/avatarUpload', async (req, res) => {
 
 router.put('/updateProfile', async (req, res) => {
   try {
+    const items = req.body;
 
-    const { name, email, password } = req.body;
+    Object.keys(items).forEach(function(key){
+      if(items[key] == '')
+        delete items[key];
+    });
 
-    const user = await User.findById(req.userId).select('+password');    ;
-
-    if (!user) {
-      return res.status(400).send({ error: 'Usuário Inexistente' });
-    }
-
-    user.name = name;
-    user.email = email;
-    user.password = password;
-
-    user.save();
-
-    return res.send({ ok: 'Atualizado com Sucesso' });
+    await User.findByIdAndUpdate(req.userId, items, (err, doc) => {
+      if (err)
+        return res.status(400).send({ error: 'Error na Atualização dos Dados de Usuario' });
+      if (doc)
+        return res.send({ doc });
+    }).select('+password');
 
   } catch (error) {
+    console.log(error)
     return res.status(400).send({ error: 'Erro em Atualizar o perfil' });
   }
 });
