@@ -11,6 +11,7 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 const crypto = require('crypto');
 const passport = require('passport');
+const valid = require("valid-cpf-lib-amanda-gomes");
 
 const srcPath = path.resolve() + '/src';
 
@@ -35,6 +36,10 @@ router.post('/login', async (req, res) => {
     // Verificar se existe o usuário
     const check = await User.findOne({ $and: [{ email }, { cpf }] });
     if (!check) {
+
+      if (!valid.cpfValidator(cpf))
+        return res.status(400).send({ error: 'CPF invalido' });
+
       const register = await User.create(req.body);
       register.password = undefined;
       return res.send({ register, token: generateToken({ id: register.id }), message: 'Registrado com sucesso' });
