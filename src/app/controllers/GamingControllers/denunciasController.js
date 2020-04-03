@@ -45,10 +45,10 @@ router.post('/register', async (req, res) => {
   }
 });
 
-router.put('/rankDenuncia/:id/:rank', async (req, res) => {
+router.put('/rankDenuncia', async (req, res) => {
   try {
 
-    const { id, rank } = req.params;
+    const { id, rank } = req.body;
 
     const denuncia = await Denuncia.findById(id);
 

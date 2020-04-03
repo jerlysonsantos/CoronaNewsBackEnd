@@ -6,6 +6,11 @@ const questSchema = new mongoose.Schema({
     require: true,
   },
 
+  questName: {
+    type: String,
+    require: true,
+  },
+
   by: {
     type: String,
     required: true,
