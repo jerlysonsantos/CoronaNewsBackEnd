@@ -86,10 +86,10 @@ router.put('/completeQuest/:id', async (req, res) => {
   }
 });
 
-router.post('/completeAdmQuest', async (req, res) => {
-  const { questName } = req.body;
+router.put('/completeAdmQuest', async (req, res) => {
+  const { questName, ...data } = req.body;
   const user = await User.findById(req.userId);
-  const quest = questLine.quests(user, res);
+  const quest = questLine.quests(user, data, res);
 
   const BreakException = { break: 'Break' };
   Object.keys(quest).forEach(function(key){
@@ -97,6 +97,7 @@ router.post('/completeAdmQuest', async (req, res) => {
       quest[key]();
       throw BreakException;
   });
+
 });
 
 module.exports = app => app.use('/quests', router);

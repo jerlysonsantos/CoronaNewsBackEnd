@@ -43,6 +43,7 @@
     "passport-google-oauth": "^2.0.0",
     "password-generator": "^2.2.0",
     "path": "^0.12.7",
+    "secure-json-parse": "^2.1.0",
     "sharp": "^0.24.0",
     "valid-cpf-lib-amanda-gomes": "^1.0.0"
   },
