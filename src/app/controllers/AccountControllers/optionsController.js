@@ -17,12 +17,11 @@ router.post('/avatarUpload', async (req, res) => {
     const form = new multiparty.Form();
 
     form.parse(req, async (err, fields, files) => {
-      if (err) {
+      if (err)
         return res.status(400).send({ error: 'Error em enviar a foto' });
-      }
-      if (!fields || !files) {
+      if (!fields || !files)
         return res.status(400).send({ error: 'Não há arquivos' });
-      }
+
 
       const { image } = files;
 

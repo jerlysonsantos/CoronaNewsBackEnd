@@ -15,7 +15,7 @@ const questLine = require(`${srcPath}/app/middlewares/questLine.js`);
 
 router.use(authMiddleware);
 
-// ========================= Criação e Exibição ================================//
+// ========================= Criação e Exibição =============================== //
 router.post('/addNewQuest', async (req, res) => {
   try {
     const quest = await Quest.create(req.body);
@@ -36,8 +36,9 @@ router.get('/getAllQuests', async (req, res) => {
   }
 });
 
-// =============================================================================//
+// ============================================================================ //
 
+// ============================= Aceitar Quests =============================== //
 router.put('/acceptQuest/', async (req, res) => {
   try {
     const { id } = req.body;
@@ -53,6 +54,10 @@ router.put('/acceptQuest/', async (req, res) => {
   }
 });
 
+// ============================================================================ //
+
+
+// ============================= Completar Quest ============================= //
 router.put('/completeQuest/:id', async (req, res) => {
   try {
     const form = new multiparty.Form();
@@ -100,4 +105,5 @@ router.put('/completeAdmQuest', async (req, res) => {
 
 });
 
+// =========================================================================== //
 module.exports = app => app.use('/quests', router);

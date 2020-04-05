@@ -45,6 +45,11 @@ const userSchema = new mongoose.Schema({
     require: [true, 'Um Nome é necessário'],
   },
 
+  tag: {
+    type: String,
+    default: 'Principiante'
+  },
+
   email: {
     type: String,
     unique: true,

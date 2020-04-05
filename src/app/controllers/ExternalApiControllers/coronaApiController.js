@@ -4,6 +4,12 @@ const router = express.Router();
 const https = require('https');
 const sjson = require('secure-json-parse')
 
+const path = require('path');
+const srcPath = path.resolve() + '/src';
+
+const authMiddleware = require(`${srcPath}/app/middlewares/authMiddleware.js`);
+
+router.use(authMiddleware);
 router.get('/getPerState/:state', (req, res) =>  {
   try {
 
@@ -137,6 +143,36 @@ router.get('/getTimeline/:state/:city/:date', (req, res) =>  {
 
   } catch (error) {
     return res.status(400).send({ error: 'Erro no acesso da API Brasil IO' });
+  }
+});
+
+router.get('/getBoletins/:state/:date', (req, res) => {
+  try {
+    const { state, date } = req.params;
+
+    const st = state == '*' ? '' : state;
+    const dt = date == '*' ? '' : date;
+
+    let output = '';
+    https.get({
+      host: 'brasil.io',
+      path: `/api/dataset/covid19/boletim/data?format=json&state=${st}&date=${dt}`,
+      json: true,
+      headers: { 'Content-Type': 'application/json' }
+    },(response) => {
+      response.setEncoding('utf8');
+
+      response.on('data', (data) => {
+        output += data;
+      });
+      response.on('end', () => {
+        const { results } = sjson.parse(output, { protoAction: 'remove', constructorAction: 'remove' })
+
+        return res.send({ results })
+      });
+    });
+  } catch (error) {
+    return res.status(400).send({ error: 'Erro em adquirir os boletins' })
   }
 });
 
