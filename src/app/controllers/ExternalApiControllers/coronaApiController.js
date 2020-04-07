@@ -9,6 +9,8 @@ const srcPath = path.resolve() + '/src';
 
 const authMiddleware = require(`${srcPath}/app/middlewares/authMiddleware.js`);
 
+const dbEstados = require(`${srcPath}/resources/dbEstados/dbEstados.json`)
+
 router.use(authMiddleware);
 router.get('/getPerState/:state', (req, res) =>  {
   try {
@@ -39,9 +41,15 @@ router.get('/getPerState/:state', (req, res) =>  {
                 key == 'estimated_population_2019' ||
                 key == 'is_last' ||
                 key == 'order_for_place' ||
-                key == 'place_type') {
+                key == 'place_type')
               delete element[key];
+            if (key == 'state') {
+              dbEstados.estados.forEach((item) => {
+                if (element[key] == item.id)
+                  element[key] = item.estado;
+              });
             }
+
           });
           if (!element.city == '')
             cleanData.push(element);
@@ -83,8 +91,14 @@ router.get('/getAllStates', (req, res) =>  {
                 key == 'is_last' ||
                 key == 'order_for_place' ||
                 key == 'place_type' ||
-                key == 'city' ) {
+                key == 'city' )
               delete element[key];
+
+            if (key == 'state') {
+              dbEstados.estados.forEach((item) => {
+                if (element[key] == item.id)
+                  element[key] = item.estado;
+              });
             }
           });
           cleanData.push(element);
@@ -130,9 +144,15 @@ router.get('/getTimeline/:state/:city/:date', (req, res) =>  {
                 key == 'estimated_population_2019' ||
                 key == 'is_last' ||
                 key == 'order_for_place' ||
-                key == 'place_type') {
+                key == 'place_type')
               delete element[key];
+            if (key == 'state') {
+              dbEstados.estados.forEach((item) => {
+                if (element[key] == item.id)
+                  element[key] = item.estado;
+              });
             }
+
           });
           if (!element.city == '')
             cleanData.push(element);
