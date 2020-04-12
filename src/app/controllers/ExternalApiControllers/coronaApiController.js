@@ -10,6 +10,8 @@ const srcPath = path.resolve() + '/src';
 const authMiddleware = require(`${srcPath}/app/middlewares/authMiddleware.js`);
 
 const dbEstados = require(`${srcPath}/resources/dbEstados/dbEstados.json`)
+const dbMunicipios = require(`${srcPath}/resources/dbEstados/dbMunicipios.json`)
+
 
 router.use(authMiddleware);
 router.get('/getPerState/:state', (req, res) =>  {
@@ -34,7 +36,7 @@ router.get('/getPerState/:state', (req, res) =>  {
 
         const cleanData = [];
         results.forEach((element, index, array) => {
-          Object.keys(element).forEach(function(key){
+          Object.keys({ ...element, position: ''}).forEach(function(key){
             if (key == 'city_ibge_code' ||
                 key == 'confirmed_per_100k_inhabitants' ||
                 key == 'death_rate' ||
@@ -43,16 +45,15 @@ router.get('/getPerState/:state', (req, res) =>  {
                 key == 'order_for_place' ||
                 key == 'place_type')
               delete element[key];
-            if (key == 'state') {
-              dbEstados.estados.forEach((item) => {
-                if (element[key] == item.id)
-                  element[key] = item.estado;
+            if (key == 'city')
+              dbMunicipios.cidades.forEach(async (item) => {
+                if (element[key] == item.nome)
+                  element['position'] = { latitude : item.latitude, longitude : item.longitude };
               });
-            }
 
           });
           if (!element.city == '')
-            cleanData.push(element);
+            cleanData.push(element)
         });
         return res.send({ cleanData })
       });
@@ -65,7 +66,6 @@ router.get('/getPerState/:state', (req, res) =>  {
 
 router.get('/getAllStates', (req, res) =>  {
   try {
-
     let output = '';
     https.get({
       host: 'brasil.io',
@@ -83,7 +83,7 @@ router.get('/getAllStates', (req, res) =>  {
 
         const cleanData = [];
         results.forEach((element, index, array) => {
-          Object.keys(element).forEach(function(key){
+          Object.keys({ ...element, position: ''}).forEach(function(key){
             if (key == 'city_ibge_code' ||
                 key == 'confirmed_per_100k_inhabitants' ||
                 key == 'death_rate' ||
@@ -94,15 +94,19 @@ router.get('/getAllStates', (req, res) =>  {
                 key == 'city' )
               delete element[key];
 
-            if (key == 'state') {
-              dbEstados.estados.forEach((item) => {
-                if (element[key] == item.id)
+            if (key == 'state')
+              dbEstados.estados.forEach(async (item) => {
+                if (element[key] == item.id) {
                   element[key] = item.estado;
+                  element['position'] = item.position
+                }
               });
-            }
+
           });
           cleanData.push(element);
+
         });
+
         return res.send({ cleanData })
       });
     });
