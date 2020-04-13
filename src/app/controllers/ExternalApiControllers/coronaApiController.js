@@ -19,10 +19,12 @@ router.get('/getPerState/:state', (req, res) =>  {
 
     const { state } = req.params;
 
+    const st = state == '*' ? '' : state;
+
     let output = '';
     https.get({
       host: 'brasil.io',
-      path: `/api/dataset/covid19/caso/data?format=json&state=${state}&is_last=true`,
+      path: `/api/dataset/covid19/caso/data?format=json&state=${st}&is_last=true`,
       json: true,
       headers: { 'Content-Type': 'application/json' }
     },(response) => {
