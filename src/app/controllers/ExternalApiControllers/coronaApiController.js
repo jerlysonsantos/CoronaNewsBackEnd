@@ -20,7 +20,7 @@ router.get('/getPerState/:state', (req, res) =>  {
     let { state } = req.params;
 
     dbEstados.estados.forEach(async (item) => {
-      if (state === item.estado )
+      if (state.replace('State of ', '') === item.estado )
         state = item.id;
     });
 
