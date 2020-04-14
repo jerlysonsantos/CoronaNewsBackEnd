@@ -45,6 +45,16 @@ router.post('/register', async (req, res) => {
   }
 });
 
+router.get('/getAllDenuncias', async (req, res) => {
+  try {
+    const denuncias = await Denuncia.find({});
+
+    return res.send({ denuncias });
+  } catch (error) {
+    return res.status(400).send({ error: 'Erro em exibir denuncias' });
+  }
+});
+
 router.put('/rankDenuncia', async (req, res) => {
   try {
 

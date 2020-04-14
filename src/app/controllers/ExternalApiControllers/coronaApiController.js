@@ -17,14 +17,17 @@ router.use(authMiddleware);
 router.get('/getPerState/:state', (req, res) =>  {
   try {
 
-    const { state } = req.params;
+    let { state } = req.params;
 
-    const st = state == '*' ? '' : state;
+    dbEstados.estados.forEach(async (item) => {
+      if (state === item.estado )
+        state = item.id;
+    });
 
     let output = '';
     https.get({
       host: 'brasil.io',
-      path: `/api/dataset/covid19/caso/data?format=json&state=${st}&is_last=true`,
+      path: `/api/dataset/covid19/caso/data?format=json&state=${state}&is_last=true`,
       json: true,
       headers: { 'Content-Type': 'application/json' }
     },(response) => {
