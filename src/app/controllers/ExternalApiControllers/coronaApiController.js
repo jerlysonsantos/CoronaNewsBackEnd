@@ -55,6 +55,12 @@ router.get('/getPerState/:state', (req, res) =>  {
                 if (element[key] == item.nome)
                   element['position'] = { latitude : item.latitude, longitude : item.longitude };
               });
+            if (key == 'state')
+              dbEstados.estados.forEach(async (item) => {
+                if (element[key] == item.id) {
+                  element[key] = item.estado;
+                }
+              });
 
           });
           if (!element.city == '')
