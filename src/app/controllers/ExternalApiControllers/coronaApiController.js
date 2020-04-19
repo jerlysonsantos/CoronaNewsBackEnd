@@ -23,11 +23,10 @@ router.get('/getPerState/:state', (req, res) =>  {
       if (state.replace('State of ', '') === item.estado )
         state = item.id;
     });
-
     let output = '';
     https.get({
       host: 'brasil.io',
-      path: `/api/dataset/covid19/caso/data?format=json&state=${state}&is_last=true`,
+      path: `/api/dataset/covid19/caso/data/?format=json&state=${state}&is_last=true`,
       json: true,
       headers: { 'Content-Type': 'application/json' }
     },(response) => {
@@ -38,7 +37,6 @@ router.get('/getPerState/:state', (req, res) =>  {
       });
       response.on('end', () => {
         const { results } = sjson.parse(output, { protoAction: 'remove', constructorAction: 'remove' })
-
         const cleanData = [];
         results.forEach((element, index, array) => {
           Object.keys({ ...element, position: ''}).forEach(function(key){
@@ -80,7 +78,7 @@ router.get('/getAllStates', (req, res) =>  {
     let output = '';
     https.get({
       host: 'brasil.io',
-      path: '/api/dataset/covid19/caso/data?format=json&place_type=state&is_last=true',
+      path: '/api/dataset/covid19/caso/data/?format=json&place_type=state&is_last=true',
       json: true,
       headers: { 'Content-Type': 'application/json' }
     },(response) => {
@@ -138,7 +136,7 @@ router.get('/getTimeline/:state/:city/:date', (req, res) =>  {
     let output = '';
     https.get({
       host: 'brasil.io',
-      path: `/api/dataset/covid19/caso/data?format=json&state=${state}&city=${ci}&date=${da}`,
+      path: `/api/dataset/covid19/caso/data/?format=json&state=${state}&city=${ci}&date=${da}`,
       json: true,
       headers: { 'Content-Type': 'application/json' }
     },(response) => {
@@ -191,7 +189,7 @@ router.get('/getBoletins/:state/:date', (req, res) => {
     let output = '';
     https.get({
       host: 'brasil.io',
-      path: `/api/dataset/covid19/boletim/data?format=json&state=${st}&date=${dt}`,
+      path: `/api/dataset/covid19/boletim/data/?format=json&state=${st}&date=${dt}`,
       json: true,
       headers: { 'Content-Type': 'application/json' }
     },(response) => {
