@@ -5,10 +5,19 @@ const router = express.Router();
 const path = require('path');
 const srcPath = path.resolve() + '/src';
 
+const jwt = require('jsonwebtoken');
 
 const User = require(`${srcPath}/app/models/userModel.js`);
 const compress = require(`${srcPath}/app/middlewares/compressMiddleware.js`);
 const authMiddleware = require(`${srcPath}/app/middlewares/authMiddleware.js`);
+
+// =========================Gera Um token de Autenticação==================== //
+function generateToken(params = {}) {
+  return jwt.sign(params, secret, {
+    expiresIn: 86400,
+  });
+}
+// ========================================================================== //
 
 router.use(authMiddleware);
 // ====================== Avatar Upload ======================= //
@@ -52,11 +61,10 @@ router.put('/updateProfile', async (req, res) => {
       if (err)
         return res.status(400).send({ error: 'Error na Atualização dos Dados de Usuario' });
       if (doc)
-        return res.send({ doc });
+        return res.send({ user: doc, token: generateToken({ id: doc.id }), message: 'Atualizado com sucesso'  });
     }).select('+password');
 
   } catch (error) {
-    console.log(error)
     return res.status(400).send({ error: 'Erro em Atualizar o perfil' });
   }
 });

@@ -22,7 +22,7 @@ const mailer = require(`${srcPath}/module/mailer.js`);
 // =========================Gera Um token de Autenticação==================== //
 function generateToken(params = {}) {
   return jwt.sign(params, secret, {
-    expiresIn: 3600,
+    expiresIn: 86400,
   });
 }
 // ========================================================================== //
@@ -42,7 +42,7 @@ router.post('/login', async (req, res) => {
 
       const register = await User.create(req.body);
       register.password = undefined;
-      return res.send({ register, token: generateToken({ id: register.id }), message: 'Registrado com sucesso' });
+      return res.send({ user: register, token: generateToken({ id: register.id }), message: 'Registrado com sucesso' });
     }
 
     const user = await User.findOne({ $or: [{ email }, { cpf }] })
