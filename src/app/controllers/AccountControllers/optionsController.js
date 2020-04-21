@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken');
 const User = require(`${srcPath}/app/models/userModel.js`);
 const compress = require(`${srcPath}/app/middlewares/compressMiddleware.js`);
 const authMiddleware = require(`${srcPath}/app/middlewares/authMiddleware.js`);
+const { secret } = require(`${srcPath}/config/secretToken.json`);
 
 // =========================Gera Um token de Autenticação==================== //
 function generateToken(params = {}) {
