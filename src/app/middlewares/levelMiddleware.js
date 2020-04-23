@@ -11,7 +11,7 @@ exports.leveling = async(xp, user, res) => {
       user.tag = 'Avançado';
     else if (user.level >= 45 && user.level < 60)
       user.tag = 'Expert';
-    else
+    else if (user.level > 60)
       user.tag = 'Embaixador';
 
     return 0;

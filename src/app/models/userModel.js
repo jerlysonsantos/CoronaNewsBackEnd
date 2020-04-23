@@ -82,8 +82,8 @@ const userSchema = new mongoose.Schema({
       require: true,
     },
     location: {
-      type: { type: String },
-      coordinates: [Number],
+      latitude:  mongoose.Decimal128,
+      longitude:  mongoose.Decimal128
     },
     rank: {
       type: Number,
