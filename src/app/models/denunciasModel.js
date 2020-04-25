@@ -26,6 +26,8 @@ const denunciaSchema = new mongoose.Schema({
     latitude:  Number,
     longitude:  Number
   },
+  lat: Number,
+  lng: Number,
   rank: {
     type: Number,
     default: 0,
