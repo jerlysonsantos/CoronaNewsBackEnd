@@ -11,7 +11,6 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 const crypto = require('crypto');
 const passport = require('passport');
-const valid = require("valid-cpf-lib-amanda-gomes");
 
 const srcPath = path.resolve() + '/src';
 
@@ -31,12 +30,13 @@ function generateToken(params = {}) {
 
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { name, email, password } = req.body;
 
     // Verificar se existe o usuário
-    const check = await User.findOne({ email });
+    const check = await User.findOne({ $or: [{ email }, { name }] });
     if (!check) {
       const register = await User.create(req.body);
+
       register.password = undefined;
       return res.send({ user: register, token: generateToken({ id: register.id }), message: 'Registrado com sucesso' });
     }
@@ -51,7 +51,6 @@ router.post('/login', async (req, res) => {
     // Compara senha para efetuar o login
     if (!await bcrypt.compare(password, user.password))
       return res.status(401).send({ error: 'Senha invalida' });
-
 
     // Retorna as informações do usuario logado mais o token de sessão
     user.password = undefined;
@@ -77,9 +76,7 @@ router.post('/forgot_password', async (req, res) => {
     // ============================= Parte de envio de email ==================== //
 
     const token = crypto.randomBytes(20).toString('hex'); // Cria um Token para o MAIL
-
-    const type = 'Recuperar sua senha';
-    const route = 'resetPass';
+    const appUrl = process.env.APP_URL;
 
     // Determina a validade do MAIL
     const now = new Date();
@@ -91,20 +88,21 @@ router.post('/forgot_password', async (req, res) => {
         passwordResetExpires: now,
       },
     });
+
     mailer.sendMail({
       to: email,
-      from: 'no-reply-coronahoje@gmail.com',
+      from: 'jerlysonsantosfeliciano@gmail.com',
       subject: 'Esquecimento de Senha no App Corona hoje',
       template: 'mail',
+      /*
       attachments: [{
         filename: 'sirvame.png',
         path: path.join(__dirname, '../../www/img/sirvame.png'),
         cid: 'logo@cid',
-      }],
+      }],*/
       context: {
-        type,
-        route,
         token,
+        appUrl,
         email,
       },
 
@@ -152,7 +150,43 @@ router.post('/reset_password', async (req, res) => {
     return res.status(400).send({ error: 'Erro no esqueci recuperar senha' });
   }
 });
+
+router.get('/resetPage', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../../www/resetPass.html'));
+});
 // ==========================================================================//
+
+router.get('/revokeToken/:id', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const { id } = req.params;
+    if (!authHeader) {
+      throw 'Sem token enviado';
+    }
+
+    const parts = authHeader.split(' ');
+
+    if (!parts.length === 2) {
+      throw 'Token error';
+    }
+
+    const [scheme, token] = parts;
+
+    if (!/^Bearrer$/i.test(scheme)) {
+      throw 'Token malformatted';
+    }
+
+    jwt.verify(token, secret, async (err, decoded) => {
+      if (err) {
+        const user = await User.findOneById(id);
+        return res.send({ user, token: generateToken({ id }) });
+      }
+      return res.send({ ok: 'Token Valido' });
+    });
+    } catch (error) {
+      return res.status(400).send({ error });
+    }
+});
 
 // ============================ Login Social =============================== //
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
