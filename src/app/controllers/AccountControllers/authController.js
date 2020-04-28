@@ -31,21 +31,17 @@ function generateToken(params = {}) {
 
 router.post('/login', async (req, res) => {
   try {
-    const { cpf, email, password } = req.body;
+    const { email, password } = req.body;
 
     // Verificar se existe o usuário
-    const check = await User.findOne({ $and: [{ email }, { cpf }] });
+    const check = await User.findOne({ email });
     if (!check) {
-
-      if (!valid.cpfValidator(cpf))
-        return res.status(400).send({ error: 'CPF invalido' });
-
       const register = await User.create(req.body);
       register.password = undefined;
       return res.send({ user: register, token: generateToken({ id: register.id }), message: 'Registrado com sucesso' });
     }
 
-    const user = await User.findOne({ $or: [{ email }, { cpf }] })
+    const user = await User.findOne({ email })
       .select('+password')
       .populate('questAcquired');
 
@@ -97,8 +93,8 @@ router.post('/forgot_password', async (req, res) => {
     });
     mailer.sendMail({
       to: email,
-      from: 'no-reply-sirvame@gmail.com',
-      subject: 'Esquecimento de Senha no Sistema SirvaMe',
+      from: 'no-reply-coronahoje@gmail.com',
+      subject: 'Esquecimento de Senha no App Corona hoje',
       template: 'mail',
       attachments: [{
         filename: 'sirvame.png',

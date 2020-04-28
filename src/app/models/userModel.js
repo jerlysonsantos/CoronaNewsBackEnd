@@ -32,7 +32,6 @@ const userSchema = new mongoose.Schema({
   cpf: {
     type: String,
     unique: true,
-    require: [true, 'Um CPF é necessário'],
     select: false,
   },
 

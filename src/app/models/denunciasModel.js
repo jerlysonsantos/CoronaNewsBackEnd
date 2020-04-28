@@ -31,7 +31,13 @@ const denunciaSchema = new mongoose.Schema({
   rank: {
     type: Number,
     default: 0,
-  }
+  },
+  whoVote: [{
+    id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    }
+  }],
 });
 
 const Denuncia = mongoose.model('Denuncia', denunciaSchema);

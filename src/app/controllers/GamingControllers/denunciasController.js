@@ -47,7 +47,7 @@ router.post('/register', async (req, res) => {
 
 router.get('/getAllDenuncias', async (req, res) => {
   try {
-    const denuncias = await Denuncia.find({});
+    const denuncias = await Denuncia.find({}).populate('by');
 
     return res.send({ denuncias });
   } catch (error) {
@@ -62,7 +62,10 @@ router.put('/rankDenuncia', async (req, res) => {
 
     const denuncia = await Denuncia.findById(id);
 
-
+    denuncia.whoVote.forEach(element => {
+      if (element._id == req.userId)
+        throw 'Você já votou nessa denuncia';
+    });
     const user = await User.findById(denuncia.by);
 
     switch (rank) {
@@ -78,7 +81,7 @@ router.put('/rankDenuncia', async (req, res) => {
         break;
     }
 
-    if (denuncia.rank <= -10) {
+    if (denuncia.rank <= -5) {
       await Denuncia.findOneAndDelete({ _id: id });
       switch (denuncia.type) {
         case 'aglomeracoes':
@@ -95,12 +98,12 @@ router.put('/rankDenuncia', async (req, res) => {
       }
     }
 
+    denuncia.whoVote.push(req.userId);
     denuncia.save();
     user.save()
-    return res.send({ ok: true });
+    return res.send({ success: 'Voto efetuado com sucesso' });
   } catch (error) {
-    console.log(error)
-    return res.status(400).send({ error: 'Erro em registrar uma denuncia' });
+    return res.status(400).send({ error });
   }
 });
 
