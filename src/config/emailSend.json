@@ -1,6 +1,4 @@
 {
   "host": "smtp.gmail.com",
-  "port": 587,
-  "user": "jerlysonsantosfeliciano@gmail.com",
-  "pass": "J3rlys0n123"
+  "port": 587
 }

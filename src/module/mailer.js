@@ -5,10 +5,10 @@ const hbs = require('nodemailer-express-handlebars');
 const {
   host,
   port,
-  user,
-  pass,
 } = require('../config/emailSend.json');
 
+const user = process.env.mailUser;
+const pass = process.env.mailPass;
 
 const transport = nodemailer.createTransport({
   host,
