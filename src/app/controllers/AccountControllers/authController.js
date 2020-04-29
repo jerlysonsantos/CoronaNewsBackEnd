@@ -21,7 +21,7 @@ const mailer = require(`${srcPath}/module/mailer.js`);
 // =========================Gera Um token de Autenticação==================== //
 function generateToken(params = {}) {
   return jwt.sign(params, secret, {
-    expiresIn: 86400,
+    expiresIn: 31557600,
   });
 }
 // ========================================================================== //
