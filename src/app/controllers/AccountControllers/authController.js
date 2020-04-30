@@ -33,30 +33,32 @@ router.post('/login', async (req, res) => {
     const { name, email, password } = req.body;
 
     // Verificar se existe o usuário
-    const check = await User.findOne({ $and: [{ email }, { name }] });
+    const check = await User.findOne({ $or: [{ email }, { name }] });
     if (!check) {
-      const register = await User.create(req.body);
-
+      const register = await User.create(req.body, (err) => {
+        if (err)
+          throw 'Usuario Já existe';
+      });
       register.password = undefined;
       return res.send({ user: register, token: generateToken({ id: register.id }), message: 'Registrado com sucesso' });
     }
 
-    const user = await User.findOne({ $or: [{ email }, { name }]  })
+    const user = await User.findOne({ $and: [{ email }, { name }]  })
       .select('+password')
       .populate('questAcquired');
 
     if (!user)
-      return res.status(401).send({ error: 'Usuario invalido' });
+      throw 'O nome ou o email está errado';
 
     // Compara senha para efetuar o login
     if (!await bcrypt.compare(password, user.password))
-      return res.status(401).send({ error: 'Senha invalida' });
+      throw 'Senha invalida';
 
     // Retorna as informações do usuario logado mais o token de sessão
     user.password = undefined;
     return res.send({ user, token: generateToken({ id: user.id }), message: 'Logado com sucesso' });
-  } catch (err) {
-    return res.status(400).status({ error: 'Erro no login' });
+  } catch (error) {
+    return res.status(400).send({ error });
   }
 });
 
