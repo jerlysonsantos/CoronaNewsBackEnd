@@ -33,7 +33,7 @@ router.post('/login', async (req, res) => {
     const { name, email, password } = req.body;
 
     // Verificar se existe o usuário
-    const check = await User.findOne({ $or: [{ email }, { name }] });
+    const check = await User.findOne({ $and: [{ email }, { name }] });
     if (!check) {
       const register = await User.create(req.body);
 
@@ -41,7 +41,7 @@ router.post('/login', async (req, res) => {
       return res.send({ user: register, token: generateToken({ id: register.id }), message: 'Registrado com sucesso' });
     }
 
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ $or: [{ email }, { name }]  })
       .select('+password')
       .populate('questAcquired');
 
