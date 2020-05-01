@@ -35,10 +35,11 @@ router.post('/login', async (req, res) => {
     // Verificar se existe o usuário
     const check = await User.findOne({ $or: [{ email }, { name }] });
     if (!check) {
-      const register = await User.create(req.body, (err) => {
-        if (err)
-          throw 'Usuario Já existe';
-      });
+      const register = await User.create(req.body);
+
+      if (!register)
+        throw 'Usuario já existe'
+
       register.password = undefined;
       return res.send({ user: register, token: generateToken({ id: register.id }), message: 'Registrado com sucesso' });
     }

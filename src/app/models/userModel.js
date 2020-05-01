@@ -29,12 +29,6 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
   },
 
-  cpf: {
-    type: String,
-    unique: true,
-    select: false,
-  },
-
   password: {
     type: String,
     required: [true, 'Uma Senha é necessária'],
