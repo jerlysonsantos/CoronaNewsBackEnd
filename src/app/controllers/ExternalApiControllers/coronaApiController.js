@@ -201,6 +201,17 @@ router.get('/getBoletins/:state/:date', (req, res) => {
       response.on('end', () => {
         const { results } = sjson.parse(output, { protoAction: 'remove', constructorAction: 'remove' })
 
+        results.forEach((element, index, array) => {
+          Object.keys(element).forEach(function(key){
+            if (key == 'state')
+              dbEstados.estados.forEach(async (item) => {
+                if (element[key] == item.id) {
+                  element[key] = item.estado;
+                  element['position'] = item.position
+                }
+              });
+          });
+        });
         return res.send({ results })
       });
     });

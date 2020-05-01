@@ -17,7 +17,10 @@ router.post('/register', async (req, res) => {
 
     const { type } = req.body;
 
-    const denuncia = await Denuncia.create({ ...req.body, by: req.userId })
+    const now = new Date();
+    now.setHours(now.getHours() + 24);
+
+    const denuncia = await Denuncia.create({ ...req.body, by: req.userId, expires: now });
     const user = await User.findById(req.userId);
 
     switch (type) {

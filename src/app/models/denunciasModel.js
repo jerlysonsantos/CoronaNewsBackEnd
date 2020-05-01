@@ -38,6 +38,10 @@ const denunciaSchema = new mongoose.Schema({
       ref: 'User',
     }
   }],
+  expires: {
+    type: Date,
+    select: false,
+  }
 });
 
 const Denuncia = mongoose.model('Denuncia', denunciaSchema);

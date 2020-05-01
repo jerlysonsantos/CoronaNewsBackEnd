@@ -6,6 +6,8 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
+const Denuncia = require('./app/models/denunciasModel');
+
 const app = express();
 
 // ================== Configurações do Socket.io ======================= //
@@ -35,3 +37,13 @@ app.use(express.static(__dirname + '/www'));
 // ==================================================================== //
 
 require('./app/controllers/index.js')(app);
+
+setInterval(async () => {
+  const lista = await Denuncia.find({}).select('+expires');
+  lista.forEach(async (element) => {
+    const now = new Date();
+    if (now > element.expires) {
+      await Denuncia.findByIdAndRemove(element._id);
+    }
+  });
+}, 7200);
