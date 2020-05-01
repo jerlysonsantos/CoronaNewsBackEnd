@@ -37,6 +37,10 @@ router.get('/getPerState/:state', (req, res) =>  {
       });
       response.on('end', () => {
         const { results } = sjson.parse(output, { protoAction: 'remove', constructorAction: 'remove' })
+
+        if (!results)
+          return res.status(400).send({ error: 'Não há resultados' });
+
         const cleanData = [];
         results.forEach((element, index, array) => {
           Object.keys({ ...element, position: ''}).forEach(function(key){
@@ -89,6 +93,9 @@ router.get('/getAllStates', (req, res) =>  {
       });
       response.on('end', () => {
         const { results } = sjson.parse(output, { protoAction: 'remove', constructorAction: 'remove' })
+
+        if (!results)
+          return res.status(400).send({ error: 'Não há resultados' });
 
         const cleanData = [];
         results.forEach((element, index, array) => {
@@ -148,6 +155,9 @@ router.get('/getTimeline/:state/:city/:date', (req, res) =>  {
       response.on('end', () => {
         const { results } = sjson.parse(output, { protoAction: 'remove', constructorAction: 'remove' })
 
+        if (!results)
+          return res.status(400).send({ error: 'Não há resultados' });
+
         const cleanData = [];
         results.forEach((element, index, array) => {
           Object.keys(element).forEach(function(key){
@@ -179,9 +189,9 @@ router.get('/getTimeline/:state/:city/:date', (req, res) =>  {
   }
 });
 
-router.get('/getBoletins/:state/:date', (req, res) => {
+router.get('/getBoletins/:state/:date/:page', (req, res) => {
   try {
-    const { state, date } = req.params;
+    const { state, date, page } = req.params;
 
     const st = state == '*' ? '' : state;
     const dt = date == '*' ? '' : date;
@@ -189,7 +199,7 @@ router.get('/getBoletins/:state/:date', (req, res) => {
     let output = '';
     https.get({
       host: 'brasil.io',
-      path: `/api/dataset/covid19/boletim/data/?format=json&state=${st}&date=${dt}`,
+      path: `/api/dataset/covid19/boletim/data/?format=json&state=${st}&date=${dt}&page=${page}`,
       json: true,
       headers: { 'Content-Type': 'application/json' }
     },(response) => {
@@ -201,13 +211,15 @@ router.get('/getBoletins/:state/:date', (req, res) => {
       response.on('end', () => {
         const { results } = sjson.parse(output, { protoAction: 'remove', constructorAction: 'remove' })
 
+        if (!results)
+          return res.status(400).send({ error: 'Não há resultados' });
+
         results.forEach((element, index, array) => {
           Object.keys(element).forEach(function(key){
             if (key == 'state')
               dbEstados.estados.forEach(async (item) => {
                 if (element[key] == item.id) {
                   element[key] = item.estado;
-                  element['position'] = item.position
                 }
               });
           });
