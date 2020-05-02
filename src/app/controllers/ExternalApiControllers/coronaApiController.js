@@ -224,7 +224,6 @@ router.get('/getBoletins/:state/:date/:page', (req, res) => {
               });
             if (key == 'date') {
               const array = element['date'].split('-');
-              console.log(array)
               element[key] = `${array[2]}/${array[1]}/${array[0]}`;
             }
 
