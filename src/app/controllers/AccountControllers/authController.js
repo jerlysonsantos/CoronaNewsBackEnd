@@ -114,7 +114,7 @@ router.post('/forgot_password', async (req, res) => {
         return res.status(400).send({ err });
       }
 
-      return res.status(200).send({ success: 'Email enviado com sucesso' });
+      return res.send({ success: 'Email enviado com sucesso' });
     });
   } catch (err) {
     return res.status(400).send({ err });
