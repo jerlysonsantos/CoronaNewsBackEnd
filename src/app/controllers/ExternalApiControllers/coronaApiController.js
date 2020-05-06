@@ -189,6 +189,7 @@ router.get('/getTimeline/:state/:city/:date', (req, res) =>  {
   }
 });
 
+
 router.get('/getBoletins/:state/:date/:page', (req, res) => {
   try {
     const { state, date, page } = req.params;
@@ -214,7 +215,7 @@ router.get('/getBoletins/:state/:date/:page', (req, res) => {
         if (!results)
           return res.status(400).send({ error: 'Não há resultados' });
 
-        results.forEach((element, index, array) => {
+        results.forEach(async (element) => {
           Object.keys(element).forEach(function(key){
             if (key == 'state')
               dbEstados.estados.forEach(async (item) => {
@@ -226,10 +227,9 @@ router.get('/getBoletins/:state/:date/:page', (req, res) => {
               const array = element['date'].split('-');
               element[key] = `${array[2]}/${array[1]}/${array[0]}`;
             }
-
           });
         });
-        return res.send({ results })
+        return res.send({ results: [...new Map(results.map(item => [item['url'], item])).values()] })
       });
     });
   } catch (error) {
