@@ -28,28 +28,33 @@ function generateToken(params = {}) {
 
 // ================================= LOGIN E CADASTRO ======================= //
 
+router.post('/register', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const check = await User.findOne({ email });
+    if (check)
+      throw 'Email já cadastrado';
+
+    const register = await User.create(req.body);
+    register.password = undefined;
+    return res.send({ user: register, token: generateToken({ id: register.id }), message: 'Registrado com sucesso' });
+  } catch (error) {
+    return res.status(400).send({ error });
+  }
+});
+
 router.post('/login', async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { email, password } = req.body;
 
-    // Verificar se existe o usuário
-    const check = await User.findOne({ $or: [{ email }, { name }] });
-    if (!check) {
-      const register = await User.create(req.body);
+    const checkEmail = await User.findOne({ email });
+    if (!checkEmail)
+      throw 'Esse e-mail não foi cadastrado';
 
-      if (!register)
-        throw 'Usuario já existe'
-
-      register.password = undefined;
-      return res.send({ user: register, token: generateToken({ id: register.id }), message: 'Registrado com sucesso' });
-    }
-
-    const user = await User.findOne({ $and: [{ email }, { name }]  })
+    const user = await User.findOne({ email })
       .select('+password')
       .populate('questAcquired');
-
-    if (!user)
-      throw 'O nome ou o email está errado';
 
     // Compara senha para efetuar o login
     if (!await bcrypt.compare(password, user.password))
@@ -97,12 +102,11 @@ router.post('/forgot_password', async (req, res) => {
       from: 'jerlysonsantosfeliciano@gmail.com',
       subject: 'Esquecimento de Senha no App Corona hoje',
       template: 'mail',
-      /*
       attachments: [{
-        filename: 'sirvame.png',
-        path: path.join(__dirname, '../../www/img/sirvame.png'),
+        filename: 'outlier.png',
+        path: path.join(__dirname, '../../www/img/outlier.png'),
         cid: 'logo@cid',
-      }],*/
+      }],
       context: {
         token,
         appUrl,
@@ -114,7 +118,7 @@ router.post('/forgot_password', async (req, res) => {
         return res.status(400).send({ err });
       }
 
-      return res.send({ success: 'Email enviado com sucesso' });
+      return res.send({ success: 'Email enviado com sucesso! Verifique sua caixa de entrada' });
     });
   } catch (err) {
     return res.status(400).send({ err });
