@@ -103,8 +103,8 @@ router.post('/forgot_password', async (req, res) => {
       subject: 'Esquecimento de Senha no App Corona hoje',
       template: 'mail',
       attachments: [{
-        filename: 'outlier.png',
-        path: path.join(__dirname, '../../www/img/outlier.png'),
+        filename: 'logo.png',
+        path: path.join(__dirname, '../../../www/img/logo.png'),
         cid: 'logo@cid',
       }],
       context: {
