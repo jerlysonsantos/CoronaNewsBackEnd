@@ -10,10 +10,9 @@ const Denuncia = require('./app/models/denunciasModel');
 
 const app = express();
 
-// ================== Configurações do Socket.io ======================= //
-
 const port = process.env.PORT || '3000';
-const server = app.listen(port, () => console.log('Open Server'));
+
+app.listen(port, () => console.log('Open Server'));
 
 // ======================== Configurações Gerais ======================= //
 
@@ -35,6 +34,10 @@ app.use(bodyParser.urlencoded({extended: false }));
 app.use(express.static(__dirname + '/www'));
 
 // ==================================================================== //
+
+app.get('/', async (req, res) => {
+  res.sendFile(path.join(__dirname, '/www'));
+});
 
 require('./app/controllers/index.js')(app);
 

@@ -57,15 +57,20 @@ router.put('/updateProfile', async (req, res) => {
       if(items[key] == '')
         delete items[key];
     });
+    const user = await User.findById(req.userId);
 
-    await User.findByIdAndUpdate(req.userId, items, (err, doc) => {
-      if (err)
-        return res.status(400).send({ error: 'Error na Atualização dos Dados de Usuario' });
-      if (doc)
-        return res.send({ user: doc, token: generateToken({ id: doc.id }), message: 'Atualizado com sucesso'  });
-    }).select('+password');
-
+    Object.keys(user).forEach((key) => {
+      if(items['name'])
+        user['name'] = items['name'];
+      if(items['email'])
+        user['email'] = items['email'];
+      if(items['password'])
+        user['password'] = items['password'];
+    });
+    user.save();
+    return res.send({ user, token: generateToken({ id: user.id }), message: 'Atualizado com sucesso'  });
   } catch (error) {
+    console.log(error)
     return res.status(400).send({ error: 'Erro em Atualizar o perfil' });
   }
 });

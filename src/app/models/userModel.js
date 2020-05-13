@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     require: [true, 'Um Nome é necessário'],
-    maxlength: 30,
+    maxlength: 60,
   },
 
   tag: {
@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     require: [true, 'Um Email é necessário'],
     lowercase: true,
-    maxlength: 30,
+    maxlength: 60,
   },
 
   password: {

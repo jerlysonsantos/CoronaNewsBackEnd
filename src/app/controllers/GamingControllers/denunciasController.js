@@ -115,9 +115,9 @@ router.delete('/reinvoke/:id', async (req, res) => {
 
     const { id } = req.params;
 
-    await Denuncia.deleteOne({ id });
+    await Denuncia.findByIdAndDelete(id);
 
-    return res.send({ ok: true });
+    return res.send({ success: 'Denúncia apagada com sucesso' });
   } catch (error) {
     return res.status(400).send({ error: 'Erro em registrar uma denuncia' });
   }

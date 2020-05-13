@@ -55,7 +55,6 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({ email })
       .select('+password')
       .populate('questAcquired');
-
     // Compara senha para efetuar o login
     if (!await bcrypt.compare(password, user.password))
       throw 'Senha invalida';
