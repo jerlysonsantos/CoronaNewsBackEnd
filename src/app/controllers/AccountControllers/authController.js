@@ -21,7 +21,7 @@ const mailer = require(`${srcPath}/module/mailer.js`);
 // =========================Gera Um token de Autenticação==================== //
 function generateToken(params = {}) {
   return jwt.sign(params, secret, {
-    expiresIn: 31557600,
+    expiresIn: 86400,
   });
 }
 // ========================================================================== //
@@ -184,10 +184,11 @@ router.get('/revokeToken/:id', async (req, res) => {
 
     jwt.verify(token, secret, async (err, decoded) => {
       if (err) {
-        const user = await User.findOneById(id);
+        const user = await User.findById(id);
         return res.send({ user, token: generateToken({ id }) });
       }
-      return res.send({ ok: 'Token Valido' });
+      const user = await User.findById(id);
+      return res.send({ user, token: generateToken({ id }) });
     });
     } catch (error) {
       return res.status(400).send({ error });

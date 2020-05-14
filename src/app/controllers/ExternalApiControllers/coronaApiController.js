@@ -237,7 +237,7 @@ router.get('/getBoletins/:state/:date/:page', (req, res) => {
   }
 });
 
-module.exports = app => app.use('/coronaApi', router);
+module.exports = app => app.use('/brasilIoApi', router);
 
 /**
  * Usamos os dados vindos da API https://brasil.io/, que segundo o proprio manisfesto podemos usar dessas informações livremente
