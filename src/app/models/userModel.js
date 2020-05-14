@@ -63,29 +63,6 @@ const userSchema = new mongoose.Schema({
     }
   },
 
-  denuncias: [{
-    title: {
-      type: String,
-      require: true,
-    },
-    description: {
-      type: String,
-      require: true,
-    },
-    type: {
-      type: String,
-      require: true,
-    },
-    location: {
-      latitude:  mongoose.Decimal128,
-      longitude:  mongoose.Decimal128
-    },
-    rank: {
-      type: Number,
-      default: 0,
-    }
-  }],
-
   questAcquired: [{
     _id: false,
     type: mongoose.Schema.Types.ObjectId,

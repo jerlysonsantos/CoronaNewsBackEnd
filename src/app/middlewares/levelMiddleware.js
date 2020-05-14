@@ -2,7 +2,7 @@ exports.leveling = async(xp, user, res) => {
   try {
     user.xp += xp;
 
-    if (user.xp >= 20 * user.level)
+    if (user.xp >= (20 * user.level))
       user.level += 1;
 
     if (user.level >= 15 && user.level < 30)

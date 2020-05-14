@@ -37,13 +37,10 @@ router.post('/register', async (req, res) => {
         break;
     }
 
-    levelMiddleware.leveling(10, user, res)
-    user.denuncias.push(req.body);
     user.save();
 
     return res.send({ denuncia });
   } catch (error) {
-    console.log(error)
     return res.status(400).send({ error: 'Erro em registrar uma denuncia' });
   }
 });
