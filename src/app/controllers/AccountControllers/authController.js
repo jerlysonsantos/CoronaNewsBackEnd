@@ -113,10 +113,7 @@ router.post('/forgot_password', async (req, res) => {
       },
 
     }, (err) => {
-      if (err) {
-        return res.status(400).send({ err });
-      }
-
+      if (err) return res.status(400).send({ err });
       return res.send({ success: 'Email enviado com sucesso! Verifique sua caixa de entrada' });
     });
   } catch (err) {
@@ -166,23 +163,19 @@ router.get('/revokeToken/:id', async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
     const { id } = req.params;
-    if (!authHeader) {
-      throw 'Sem token enviado';
-    }
+
+    if (!authHeader) throw new Error('Sem token enviado');
 
     const parts = authHeader.split(' ');
 
-    if (!parts.length === 2) {
-      throw 'Token error';
-    }
+    if (!parts.length === 2) throw new Error('Token error');
 
     const [scheme, token] = parts;
 
-    if (!/^Bearrer$/i.test(scheme)) {
-      throw 'Token malformatted';
-    }
+    if (!/^Bearrer$/i.test(scheme)) throw new Error('Token malformatted');
 
-    jwt.verify(token, secret, async (err, decoded) => {
+
+    jwt.verify(token, secret, async (err) => {
       if (err) {
         const user = await User.findById(id);
         return res.send({ user, token: generateToken({ id }) });
@@ -190,9 +183,9 @@ router.get('/revokeToken/:id', async (req, res) => {
       const user = await User.findById(id);
       return res.send({ user, token: generateToken({ id }) });
     });
-    } catch (error) {
-      return res.status(400).send({ error });
-    }
+  } catch (error) {
+    return res.status(400).send({ error: error.message });
+  }
 });
 
 // ============================ Login Social =============================== //

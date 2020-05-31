@@ -10,6 +10,16 @@ const levelMiddleware = require(`${srcPath}/app/middlewares/levelMiddleware.js`)
 const Denuncia = require(`${srcPath}/app/models/denunciasModel.js`);
 const User = require(`${srcPath}/app/models/userModel.js`);
 
+router.get('/getAllDenuncias', async (req, res) => {
+  try {
+    const denuncias = await Denuncia.find({}).populate('by');
+
+    return res.send({ denuncias });
+  } catch (error) {
+    return res.status(400).send({ error: 'Erro em exibir denuncias' });
+  }
+});
+
 router.use(authMiddleware);
 
 router.post('/register', async (req, res) => {
@@ -42,16 +52,6 @@ router.post('/register', async (req, res) => {
     return res.send({ denuncia });
   } catch (error) {
     return res.status(400).send({ error: 'Erro em registrar uma denuncia' });
-  }
-});
-
-router.get('/getAllDenuncias', async (req, res) => {
-  try {
-    const denuncias = await Denuncia.find({}).populate('by');
-
-    return res.send({ denuncias });
-  } catch (error) {
-    return res.status(400).send({ error: 'Erro em exibir denuncias' });
   }
 });
 
