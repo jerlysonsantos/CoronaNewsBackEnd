@@ -13,7 +13,6 @@ const dbEstados = require(`${srcPath}/resources/dbEstados/dbEstados.json`)
 const dbMunicipios = require(`${srcPath}/resources/dbEstados/dbMunicipios.json`)
 
 
-router.use(authMiddleware);
 router.get('/getPerState/:state', (req, res) =>  {
   try {
 
